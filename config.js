@@ -4,6 +4,9 @@ module.exports = {
     "bradfordwagner/renovate",
     "bradfordwagner/infra",
     "bradfordwagner/k8s-deployments",
+    "bradfordwagner/devtainer",
+    "bradfordwagner/vault-plugin-keycloak-secrets",
+    "bradfordwagner/vault-plugin-manager",
   ],
   onboardingConfig: {
     $schema: "https://docs.renovatebot.com/renovate-schema.json",
