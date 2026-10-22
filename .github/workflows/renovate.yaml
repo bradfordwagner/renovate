@@ -1,0 +1,35 @@
+name: renovate
+
+on:
+  schedule:
+    # 6am EST; GitHub cron is UTC-only, so this is 7am during EDT.
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - id: app-token
+        uses: actions/create-github-app-token@v3.2.0
+        with:
+          client-id: ${{ vars.RENOVATE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+      - uses: renovatebot/github-action@v46.3.9
+        with:
+          configurationFile: config.js
+          token: ${{ steps.app-token.outputs.token }}
+        env:
+          LOG_LEVEL: info

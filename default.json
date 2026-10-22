@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared defaults for every repo in config.js",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits"
+  ],
+  "assignees": [
+    "bradfordwagner"
+  ],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "addLabels": [
+        "major"
+      ]
+    }
+  ]
+}
