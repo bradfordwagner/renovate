@@ -36,12 +36,12 @@ Also read each repo's open Dependency Dashboard issue (same author). Updates hel
 - Read the release notes for the whole range, not only the last version. Call out breaking changes, removed
   options, CRD changes and minimum-version bumps.
 - Classify the update: patch, minor or major. Majors also carry the `major` label.
-- Run the repo's own checks, as its `CLAUDE.md` describes them, against the PR branch in a temp worktree. If the repo
-  has CI, its `statusCheckRollup` is the evidence. `infra` and `k8s-deployments` have no CI:
-  - `k8s-deployments`: `helm lint` and `helm template` on each changed chart. For anything that changes what runs,
-    deploy to the `local` pool cluster the session claimed (`task local_apply`, then `task local_status`). Never use
-    `dev` or a remote cluster.
+- Run the repo's static checks against the PR branch, cloned into a temp dir. Its `CLAUDE.md` names them. If the
+  repo has CI, its `statusCheckRollup` is the evidence. `infra` and `k8s-deployments` have no CI:
+  - `k8s-deployments`: `helm lint` and `helm template` on each changed chart.
   - `infra`: a lookup-only Renovate dry run, plus whatever its `CLAUDE.md` names for the files touched.
+- If a PR changes what runs on a cluster (a minor or major chart or app bump), static checks are not enough. Verdict
+  is hold until it has been deployed; see *Deploying a PR* below.
 - A check that could not run is a gap, not a pass. Say which check and why.
 
 ## 3. Report
@@ -60,3 +60,17 @@ the one piece of evidence behind it. Then list any dashboard items waiting for a
 
 Never push commits to a `renovate/*` branch. Renovate stops updating a branch someone else has modified. If a PR
 needs a manual fix, close it and make the change in a normal branch.
+
+## Deploying a PR
+
+This skill runs from the `renovate` repo, which cannot deploy anything. A `local` pool claim is keyed by session
+directory, and `task local_apply` runs from a `k8s-deployments` worktree on the branch it deploys. So a deploy needs
+its own session:
+
+1. `sessions adopt renovate/<branch>` and pick `k8s-deployments`. The session's worktree is the Renovate branch,
+   which Renovate has already pushed, so Argo CD can sync it.
+2. `sessions add` `infra`, and claim a pool cluster from its `k3d/local/` (`task create`).
+3. Follow the *Testing a change* section of `k8s-deployments`' `CLAUDE.md`: `task local_apply`, then
+   `task local_status`. Never use `dev` or a remote cluster.
+
+Report the result back here, then merge from this repo.
