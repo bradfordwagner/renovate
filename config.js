@@ -4,6 +4,9 @@ module.exports = {
     "bradfordwagner/renovate",
     "bradfordwagner/infra",
     "bradfordwagner/k8s-deployments",
+    "bradfordwagner/devtainer",
+    "bradfordwagner/vault-plugin-keycloak-secrets",
+    "bradfordwagner/vault-plugin-manager",
   ],
   onboardingConfig: {
     $schema: "https://docs.renovatebot.com/renovate-schema.json",
@@ -11,5 +14,6 @@ module.exports = {
   },
   allowedCommands: [
     "^node \\.github/renovate/gateway-api-from-istio\\.mjs \\d+\\.\\d+\\.\\d+$",
+    "^node \\.github/renovate/version-matrix\\.mjs (vault|keycloak)$",
   ],
 };
