@@ -73,12 +73,17 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          node -p "require('./config.js').repositories.join('\n')" | while read -r repo; do
-            current=$(gh api "repos/$repo" -q .delete_branch_on_merge)
-            if [ "$current" != "true" ]; then
-              gh api -X PATCH "repos/$repo" -F delete_branch_on_merge=true --silent
+          status=0
+          while read -r repo; do
+            if ! current=$(gh api "repos/$repo" -q .delete_branch_on_merge); then
+              echo "$repo: lookup failed"; status=1; continue
+            fi
+            if [ "$current" = "true" ]; then
+              echo "$repo: already enabled"
+            elif gh api -X PATCH "repos/$repo" -F delete_branch_on_merge=true --silent; then
               echo "$repo: enabled"
             else
-              echo "$repo: already enabled"
+              echo "$repo: update failed"; status=1
             fi
-          done
+          done < <(node -p "require('./config.js').repositories.join('\n')")
+          exit "$status"
