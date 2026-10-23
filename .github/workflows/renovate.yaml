@@ -36,3 +36,34 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
         env:
           LOG_LEVEL: info
+
+  delete-branch-on-merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: mint admin token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.RENOVATE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-administration: write
+          permission-metadata: read
+      - name: enable delete_branch_on_merge
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          node -p "require('./config.js').repositories.join('\n')" | while read -r repo; do
+            current=$(gh api "repos/$repo" -q .delete_branch_on_merge)
+            if [ "$current" != "true" ]; then
+              gh api -X PATCH "repos/$repo" -F delete_branch_on_merge=true --silent
+              echo "$repo: enabled"
+            else
+              echo "$repo: already enabled"
+            fi
+          done
