@@ -51,7 +51,9 @@ the one piece of evidence behind it. Then list any dashboard items waiting for a
 
 ## 4. Act only on explicit approval
 
-- Merge: `gh pr merge <n> -R <repo> --squash`.
+- Merge: run `.claude/skills/renovate/merge-ready.sh <repo> <n>` first, then `gh pr merge <n> -R <repo> --squash` only on
+  exit 0. The script refuses `infra` and `k8s-deployments`: deploy-test those first (*Deploying a PR*). The merger agent
+  refuses them too.
 - Approve a held update: edit the dashboard issue body and tick its `- [ ] <!-- approve-branch=... -->` box. Renovate
   opens the PR on its next run.
 - Rebase or retry a PR: tick its `- [ ] <!-- rebase-branch=... -->` box in the dashboard issue, then start a run.

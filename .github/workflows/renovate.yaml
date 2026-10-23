@@ -16,14 +16,40 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: renovate-${{ inputs.repository || 'all' }}
-  cancel-in-progress: false
-
 jobs:
+  repos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      list: ${{ steps.list.outputs.list }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: list repositories
+        id: list
+        env:
+          REPOSITORY: ${{ inputs.repository }}
+        run: |
+          node -e '
+            const all = require("./config.js").repositories;
+            const one = process.env.REPOSITORY;
+            if (one && !all.includes(one)) { console.error(one + " is not in config.js"); process.exit(1); }
+            console.log("list=" + JSON.stringify(one ? [one] : all));
+          ' >> "$GITHUB_OUTPUT"
+
   renovate:
+    needs: repos
     runs-on: ubuntu-latest
     timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ${{ fromJSON(needs.repos.outputs.list) }}
+    concurrency:
+      group: renovate-${{ matrix.repo }}
+      cancel-in-progress: false
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,13 +62,6 @@ jobs:
           client-id: ${{ vars.RENOVATE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-      - name: scope to repository
-        if: inputs.repository != ''
-        env:
-          REPOSITORY: ${{ inputs.repository }}
-        run: |
-          node -e 'if (!require("./config.js").repositories.includes(process.env.REPOSITORY)) { console.error(process.env.REPOSITORY + " is not in config.js"); process.exit(1); }'
-          echo "RENOVATE_REPOSITORIES=[\"$REPOSITORY\"]" >> "$GITHUB_ENV"
       - name: renovate
         uses: renovatebot/github-action@a63d9a7bc606f7336fd20b47f2f32259a35e6213 # v46.3.9
         with:
@@ -50,6 +69,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
         env:
           LOG_LEVEL: info
+          RENOVATE_REPOSITORIES: '["${{ matrix.repo }}"]'
 
   delete-branch-on-merge:
     if: inputs.repository == ''

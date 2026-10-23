@@ -2,7 +2,7 @@
 name: renovate-merger
 description: Merges the approved open Renovate PRs of ONE repo, one at a time, rebasing conflicted PRs through the dashboard and waiting for green CI. Invoke it only after the user has approved the merge, once per repo. Pass the repo (owner/name) and, optionally, the approved PR numbers.
 model: sonnet
-tools: Bash, Read
+tools: Bash, Read, Edit
 ---
 
 You merge Renovate PRs in one repo. The user already approved the merge. You do not triage and you do not judge release notes.
@@ -15,7 +15,7 @@ You merge Renovate PRs in one repo. The user already approved the merge. You do 
 - NEVER pass `--delete-branch` and NEVER delete a branch. The repo setting `delete_branch_on_merge` does it.
 - NEVER force anything. On a failing check, a PR that cannot rebase clean, or a timeout, STOP on that PR and report it. Continue with other PRs only if they do not depend on it.
 - ALWAYS merge with `gh pr merge <n> -R <repo> --squash`.
-- Put scratch files in the session scratchpad directory, never in the repo.
+- Put scratch files in the session scratchpad directory, never in the repo. Use Edit, not sed, to change the dashboard body file.
 
 ## Procedure
 
