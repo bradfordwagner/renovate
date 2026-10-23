@@ -14,6 +14,9 @@ The App is installed on all of the account's repos, but Renovate only processes 
 This repo is public, so its Actions minutes are free. Its run logs are public too, and they name the dependencies,
 branches and PRs of every repo processed.
 
+Each run also sets `delete_branch_on_merge` on every repo in `repositories` (separate job; needs the App's Administration
+permission set to read and write).
+
 Start a run early with `gh workflow run renovate.yaml -R bradfordwagner/renovate`.
 
 ## Opting a repo in
@@ -40,4 +43,4 @@ A `postUpgradeTasks` command only runs if it matches `allowedCommands` in `confi
 - Secret `RENOVATE_APP_PRIVATE_KEY`: a private key generated on the App's settings page.
 
 App repository permissions: Checks, Commit statuses, Contents, Issues, Pull requests and Workflows set to read and
-write. Dependabot alerts and Metadata set to read-only. No webhook.
+write. Administration set to read and write. Dependabot alerts and Metadata set to read-only. No webhook.
