@@ -72,14 +72,10 @@ jobs:
           RENOVATE_REPOSITORIES: '["${{ matrix.repo }}"]'
 
   delete-branch-on-merge:
-    if: inputs.repository == ''
+    needs: repos
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
       - name: mint admin token
         id: app-token
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
@@ -92,6 +88,7 @@ jobs:
       - name: enable delete_branch_on_merge
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPOS: ${{ needs.repos.outputs.list }}
         run: |
           status=0
           while read -r repo; do
@@ -105,5 +102,5 @@ jobs:
             else
               echo "$repo: update failed"; status=1
             fi
-          done < <(node -p "require('./config.js').repositories.join('\n')")
+          done < <(node -p "JSON.parse(process.env.REPOS).join('\n')")
           exit "$status"
