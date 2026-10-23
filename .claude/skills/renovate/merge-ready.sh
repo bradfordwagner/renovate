@@ -10,7 +10,7 @@ case "$repo" in
   bradfordwagner/k8s-deployments|bradfordwagner/infra) fail "cluster-state repo; deploy-test first" ;;
 esac
 
-json=$(gh pr view "$pr" -R "$repo" --json state,author,headRefName,mergeable,mergeStateStatus,statusCheckRollup)
+json=$(gh pr view "$pr" -R "$repo" --json state,author,headRefName,headRefOid,mergeable,mergeStateStatus,statusCheckRollup)
 field() { jq -r "$1" <<<"$json"; }
 
 [ "$(field .state)" = OPEN ] || fail "state is $(field .state)"
@@ -26,5 +26,11 @@ bad=$(field '[.statusCheckRollup[]
     else select(.status != "COMPLETED" or ((.conclusion | IN("SUCCESS","SKIPPED","NEUTRAL")) | not)) | "\(.name):\(.status)/\(.conclusion)"
     end] | join(", ")')
 [ -z "$bad" ] || fail "checks not green: $bad"
+
+# A run that fails before any job starts (e.g. a matrix from empty output) reports no check.
+runs=$(gh api "repos/$repo/actions/runs?head_sha=$(field .headRefOid)" -q '[.workflow_runs[]
+  | select(.status != "completed" or ((.conclusion | IN("success","skipped","neutral")) | not))
+  | "\(.name):\(.status)/\(.conclusion)"] | join(", ")')
+[ -z "$runs" ] || fail "workflow runs not green: $runs"
 
 echo "READY $repo#$pr"
