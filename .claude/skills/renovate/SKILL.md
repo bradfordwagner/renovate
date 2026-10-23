@@ -51,12 +51,20 @@ the one piece of evidence behind it. Then list any dashboard items waiting for a
 
 ## 4. Act only on explicit approval
 
-- Merge: `gh pr merge <n> -R <repo> --squash`.
+- Merge: run `.claude/skills/renovate/merge-ready.sh <repo> <n>` first, then `gh pr merge <n> -R <repo> --squash` only on
+  exit 0. The script refuses `infra` and `k8s-deployments`: deploy-test those first (*Deploying a PR*). The merger agent
+  refuses them too.
 - Approve a held update: edit the dashboard issue body and tick its `- [ ] <!-- approve-branch=... -->` box. Renovate
   opens the PR on its next run.
-- Rebase or retry a PR: tick its `- [ ] <!-- rebase-check -->` box in the PR body.
+- Rebase or retry a PR: tick its `- [ ] <!-- rebase-branch=... -->` box in the dashboard issue, then start a run.
+- Merging more than one PR: ALWAYS spawn one `renovate-merger` agent per repo, in parallel, after approval. NEVER
+  merge a batch by hand. The agent runs `merge-ready.sh` (this directory) before each merge; a PR passes only when
+  that script exits 0. Never merge a PR that fails it.
+- Merge without `--delete-branch`: the `delete-branch-on-merge` job sets the repo setting, and agents' branch deletes
+  get denied by the permission classifier.
 - Close: `gh pr close`. Renovate then ignores that version. A newer version opens a new PR.
-- Start a run early: `gh workflow run renovate.yaml -R bradfordwagner/renovate`.
+- Start a run early: `gh workflow run renovate.yaml -R bradfordwagner/renovate`. Add `-f repository=<owner/name>` to
+  process one repo; the run is titled `renovate <owner/name>` and runs in parallel with runs for other repos.
 
 Never push commits to a `renovate/*` branch. Renovate stops updating a branch someone else has modified. If a PR
 needs a manual fix, close it and make the change in a normal branch.
