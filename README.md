@@ -14,8 +14,8 @@ The App is installed on all of the account's repos, but Renovate only processes 
 This repo is public, so its Actions minutes are free. Its run logs are public too, and they name the dependencies,
 branches and PRs of every repo processed.
 
-Each scheduled or unscoped run also sets `delete_branch_on_merge` on every repo in `repositories` (separate job; needs the App's Administration
-permission set to read and write).
+Each run also sets `delete_branch_on_merge` on the repos it processes: all of `repositories`, or only the dispatched
+`repository` (separate job; needs the App's Administration permission set to read and write).
 
 Start a run early with `gh workflow run renovate.yaml -R bradfordwagner/renovate`.
 
