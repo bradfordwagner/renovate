@@ -25,8 +25,13 @@ gh api repos/bradfordwagner/renovate/contents/config.js -q .content | base64 -d 
   | while read -r r; do gh pr list -R "$r" --author app/bradfordwagner-renovate --json number,title,url; done
 ```
 
-Also read each repo's open Dependency Dashboard issue (same author). Updates held behind `dependencyDashboardApproval`
-(for example, k3s minors in `infra`) appear only there, never as PRs.
+Also read each repo's open Dependency Dashboard issue. Updates held behind `dependencyDashboardApproval` (for example,
+k3s minors in `infra`) appear only there, never as PRs. For issues, `--author` takes the bot login, not the `app/`
+form, which matches nothing:
+
+```sh
+gh issue list -R "$r" --author 'bradfordwagner-renovate[bot]' --state open --json number,title
+```
 
 ## 2. Triage each PR
 
