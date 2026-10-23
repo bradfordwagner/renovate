@@ -74,6 +74,15 @@ the one piece of evidence behind it. Then list any dashboard items waiting for a
 Never push commits to a `renovate/*` branch. Renovate stops updating a branch someone else has modified. If a PR
 needs a manual fix, close it and make the change in a normal branch.
 
+## 5. Stats
+
+After a merge session, or when the user asks for "nerd stats", run
+`python3 -I .claude/skills/renovate/ci-stats.py --since 6h` (add `--repos <owner/name> ...` to limit it). It reads the
+repos from `config.js` and prints runs, jobs, PRs merged, queue wait, job time and slot use. Pass `--since` as `Nh`,
+`Nd` or an ISO time. It takes about 10 seconds per repo, so run it in the background for the full list. Report the
+numbers as printed. State that the Free plan caps a user account at 20 concurrent jobs: when peak concurrency hits the
+cap, queue wait is a throughput limit, not an agent fault.
+
 ## Deploying a PR
 
 This skill runs from the `renovate` repo, which cannot deploy anything. A `local` pool claim is keyed by session
