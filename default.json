@@ -19,5 +19,17 @@
         "major"
       ]
     }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Version pins annotated with `# renovate: datasource=<ds> depName=<dep> [versioning=<v>] [extractVersion=<re>]` on the line above",
+      "managerFilePatterns": [
+        "/\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+extractVersion=(?<extractVersion>\\S+))?\\s*\\n[^\\n:]*:\\s*[\"']?(?<currentValue>[^\\s\"']+)"
+      ]
+    }
   ]
 }

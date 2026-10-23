@@ -37,6 +37,32 @@ every repo should share in `default.json`.
 
 A `postUpgradeTasks` command only runs if it matches `allowedCommands` in `config.js`.
 
+## Annotated version pins
+
+`default.json` picks up any YAML value with a comment on the line above it:
+
+```yaml
+# renovate: datasource=github-releases depName=argoproj/argo-workflows
+argo_version: v4.1.6
+```
+
+Optional fields follow in this order: `versioning=<scheme>`, then `extractVersion=<regex>` (for example
+`extractVersion=^v(?<version>.*)$` when the tags carry a `v` but the pin does not).
+
+## Ansible roles
+
+The `ansible-role` preset (`ansible-role.json`) extends `default.json`. Each role's `renovate.json` extends
+`github>bradfordwagner/renovate:ansible-role`. The preset adds:
+
+- Galaxy role pins in `meta/requirements.yml`.
+- The CI base image (`upstream.tag`) in `config.yaml`.
+- Digest pins for GitHub Actions.
+- The `release` label on every update under `defaults/`, `vars/` or `meta/requirements.yml`.
+
+Each role's `.github/workflows/release.yml` calls `.github/workflows/ansible-role-release.yaml` when a PR labeled
+`release` merges. The workflow tags the next patch version and dispatches `container_tags.yml`, which publishes
+to Galaxy. A tag pushed with `GITHUB_TOKEN` starts no other workflow, so the publish must be dispatched explicitly.
+
 ## Setup
 
 - Variable `RENOVATE_APP_CLIENT_ID`: the App's Client ID.

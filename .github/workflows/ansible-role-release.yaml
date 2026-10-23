@@ -1,0 +1,40 @@
+name: ansible-role-release
+
+# Called by each ansible role's release.yml when a PR labeled `release` merges.
+on:
+  workflow_call: {}
+
+permissions:
+  contents: read
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+    concurrency:
+      group: ansible-role-release-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0
+      - name: tag next patch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          latest=$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+          IFS=. read -r major minor patch <<<"${latest:?no semver tag}"
+          next="$major.$minor.$((patch + 1))"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$next" -m "$TITLE"
+          git push origin "$next"
+          # A tag pushed with GITHUB_TOKEN triggers no push workflows; a dispatch does.
+          gh workflow run container_tags.yml --ref "$next"
+          echo "released $next" >> "$GITHUB_STEP_SUMMARY"

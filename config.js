@@ -7,6 +7,19 @@ module.exports = {
     "bradfordwagner/devtainer",
     "bradfordwagner/vault-plugin-keycloak-secrets",
     "bradfordwagner/vault-plugin-manager",
+    "bradfordwagner/ansible-role-argo",
+    "bradfordwagner/ansible-role-azure-blob-cli",
+    "bradfordwagner/ansible-role-docker-buildkit",
+    "bradfordwagner/ansible-role-github-runner",
+    "bradfordwagner/ansible-role-gitops-toolkit",
+    "bradfordwagner/ansible-role-go-releaser-install",
+    "bradfordwagner/ansible-role-golang",
+    "bradfordwagner/ansible-role-jumpdir",
+    "bradfordwagner/ansible-role-pack",
+    "bradfordwagner/ansible-role-qq",
+    "bradfordwagner/ansible-role-terraform",
+    "bradfordwagner/ansible-role-vault",
+    "bradfordwagner/ansible-role-wiz",
   ],
   onboardingConfig: {
     $schema: "https://docs.renovatebot.com/renovate-schema.json",
@@ -15,5 +28,6 @@ module.exports = {
   allowedCommands: [
     "^node \\.github/renovate/gateway-api-from-istio\\.mjs \\d+\\.\\d+\\.\\d+$",
     "^node \\.github/renovate/version-matrix\\.mjs (vault|keycloak)$",
+    "^node \\.github/renovate/abc-checksums\\.mjs \\d+\\.\\d+\\.\\d+$",
   ],
 };
