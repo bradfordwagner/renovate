@@ -61,16 +61,6 @@
         "bradfordwagner/renovate"
       ],
       "enabled": false
-    },
-    {
-      "description": "Dagger 0.15.2 engine fails to start on ubuntu-26.04 runners; hold runners on 24.04 until dagger is upgraded",
-      "matchManagers": [
-        "github-actions"
-      ],
-      "matchDepNames": [
-        "ubuntu"
-      ],
-      "allowedVersions": "<26"
     }
   ],
   "ansible-galaxy": {
