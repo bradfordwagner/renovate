@@ -2,23 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "Ansible roles: tool pins, Galaxy requirements, CI base image; labels role-content updates for release",
   "extends": [
-    "github>bradfordwagner/renovate",
+    "github>bradfordwagner/renovate:container-image",
     "helpers:pinGitHubActionDigests"
   ],
   "customManagers": [
-    {
-      "customType": "regex",
-      "description": "CI base image in config.yaml; tags are only published per OS as <version>-<os>",
-      "managerFilePatterns": [
-        "/^config\\.yaml$/"
-      ],
-      "matchStrings": [
-        "upstream:\\s*\\n\\s+repo:\\s*(?<depName>\\S+)\\s*\\n\\s+tag:\\s*(?<currentValue>\\S+)"
-      ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "semver",
-      "extractVersionTemplate": "^(?<version>\\d+\\.\\d+\\.\\d+)-"
-    },
     {
       "customType": "regex",
       "description": "Galaxy role pins in meta/requirements.yml; the ansible-galaxy manager ignores the `role:` key",

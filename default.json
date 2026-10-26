@@ -30,6 +30,30 @@
       "matchStrings": [
         "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+extractVersion=(?<extractVersion>\\S+))?\\s*\\n[^\\n:]*:\\s*[\"']?(?<currentValue>[^\\s\"']+)"
       ]
+    },
+    {
+      "customType": "regex",
+      "description": "Dagger CLI installed in workflows via `DAGGER_VERSION=<x.y.z>`",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "DAGGER_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "dagger/dagger",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Dagger modules called in workflows via `dagger -m https://github.com/<owner>/<repo>@<tag>`",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "dagger\\s+-m\\s+https://github\\.com/(?<depName>[\\w.-]+/[\\w.-]+)@(?<currentValue>[\\w.-]+)"
+      ],
+      "datasourceTemplate": "github-tags"
     }
   ]
 }
