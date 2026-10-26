@@ -20,6 +20,7 @@ module.exports = {
     "bradfordwagner/ansible-role-terraform",
     "bradfordwagner/ansible-role-vault",
     "bradfordwagner/ansible-role-wiz",
+    "bradfordwagner/gh-template-ansible-role",
     "bradfordwagner/gh-template-custom-image",
     "bradfordwagner/gh-template-mirror-image",
   ],
