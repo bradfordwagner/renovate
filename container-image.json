@@ -7,12 +7,12 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Base image in config.yaml `upstream`; tags are only published per OS as <version>-<os>",
+      "description": "Base images in config.yaml `upstream` and `runtime` (`repo:` or `image:`); tags are only published per OS as <version>-<os>",
       "managerFilePatterns": [
         "/^config\\.yaml$/"
       ],
       "matchStrings": [
-        "upstream:\\s*\\n\\s+repo:\\s*(?<depName>\\S+)\\s*\\n\\s+tag:\\s*(?<currentValue>\\S+)"
+        "(?:upstream|runtime):\\s*\\n\\s+(?:repo|image):\\s*(?<depName>\\S+)\\s*\\n\\s+tag:\\s*(?<currentValue>\\S+)"
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "semver",
