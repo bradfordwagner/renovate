@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Argo workflow.yaml image pins: `upstream_repo`/`upstream_tag` parameter pairs, inline `{ repo: 'x', tag: 'y' }` items and Dockerfile FROM lines",
+  "extends": [
+    "github>bradfordwagner/renovate"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "upstream_repo / upstream_tag parameter pair",
+      "managerFilePatterns": [
+        "/^workflow\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "name:\\s*upstream_repo\\s*\\n\\s+value:\\s*(?<depName>\\S+)\\s*\\n\\s*-\\s*name:\\s*upstream_tag\\s*\\n\\s+value:\\s*[\"']?(?<currentValue>[^\\s\"']+)"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "description": "Inline withItems entries `{ repo: 'x', tag: 'y' }`",
+      "managerFilePatterns": [
+        "/^workflow\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "repo:\\s*'(?<depName>[^']+)'\\s*,\\s*tag:\\s*'(?<currentValue>[^']+)'"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ]
+}
