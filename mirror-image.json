@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Mirror images that pin one upstream tag: tracks each config.yaml build's repo and tag",
+  "extends": [
+    "github>bradfordwagner/renovate"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Mirrored images in config.yaml `builds` (`repo:`, optional `repo_override:`, `tag:`)",
+      "managerFilePatterns": [
+        "/^config\\.yaml$/"
+      ],
+      "matchStrings": [
+        "-\\s+repo:\\s*(?<depName>\\S+)\\s*\\n(?:\\s+repo_override:.*\\n)?\\s+tag:\\s*[\"']?(?<currentValue>[^\\s\"']+)"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ]
+}
