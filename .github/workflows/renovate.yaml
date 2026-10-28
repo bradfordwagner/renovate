@@ -4,8 +4,9 @@ run-name: renovate ${{ inputs.repository || 'all' }}
 
 on:
   schedule:
-    # 6am EST; GitHub cron is UTC-only, so this is 7am during EDT.
-    - cron: "0 11 * * *"
+    # 2:37am EST (3:37am EDT); GitHub cron is UTC-only. Off the hour because
+    # top-of-hour schedules were starting 3-6h late.
+    - cron: "37 7 * * *"
   workflow_dispatch:
     inputs:
       repository:
