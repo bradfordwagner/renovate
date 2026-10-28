@@ -1,6 +1,6 @@
 # renovate
 
-Runs Renovate for every repo listed in `config.js`, once a day at 11:00 UTC, and holds the preset those repos
+Runs Renovate for every repo listed in `config.js`, once a day at 07:37 UTC, and holds the preset those repos
 extend (`default.json`).
 
 ## How it works

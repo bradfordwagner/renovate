@@ -5,7 +5,7 @@ description: Triage the open Renovate PRs across every bradfordwagner repo — l
 
 # Renovate PR triage
 
-Renovate runs from `bradfordwagner/renovate` as the `bradfordwagner-renovate` GitHub App, once a day at 11:00 UTC,
+Renovate runs from `bradfordwagner/renovate` as the `bradfordwagner-renovate` GitHub App, once a day at 07:37 UTC,
 for the repos in `config.js`. Every PR and Dependency Dashboard it creates is authored by the App and assigned to
 `bradfordwagner`.
 
