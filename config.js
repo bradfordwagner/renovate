@@ -45,5 +45,6 @@ module.exports = {
     "^node \\.github/renovate/gateway-api-from-istio\\.mjs \\d+\\.\\d+\\.\\d+$",
     "^node \\.github/renovate/version-matrix\\.mjs (vault|keycloak)$",
     "^node \\.github/renovate/abc-checksums\\.mjs \\d+\\.\\d+\\.\\d+$",
+    "^node \\.github/renovate/ansible-python\\.mjs \\d+\\.\\d+\\.\\d+$",
   ],
 };
