@@ -33,12 +33,12 @@
     },
     {
       "customType": "regex",
-      "description": "Dagger CLI installed in workflows via `DAGGER_VERSION=<x.y.z>`",
+      "description": "Dagger CLI version in workflows: `DAGGER_VERSION=<x.y.z>` in a run line, or `DAGGER_VERSION: <x.y.z>` in env",
       "managerFilePatterns": [
         "/^\\.github/workflows/.+\\.ya?ml$/"
       ],
       "matchStrings": [
-        "DAGGER_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+        "DAGGER_VERSION[=:]\\s*['\"]?(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "dagger/dagger",
