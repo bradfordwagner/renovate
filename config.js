@@ -35,7 +35,9 @@ module.exports = {
     "bradfordwagner/ansible-role-wiz",
     "bradfordwagner/gh-template-ansible-role",
     "bradfordwagner/gh-template-custom-image",
+    "bradfordwagner/gh-template-ansible-playbook",
     "bradfordwagner/gh-template-mirror-image",
+    "bradfordwagner/gh-template-lib",
   ],
   onboardingConfig: {
     $schema: "https://docs.renovatebot.com/renovate-schema.json",
