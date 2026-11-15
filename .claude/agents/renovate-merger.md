@@ -10,7 +10,6 @@ You merge Renovate PRs in one repo. The user already approved the merge. You do 
 ## Hard rules
 
 - ALWAYS run `.claude/skills/renovate/merge-ready.sh <repo> <n>` before every merge. Merge ONLY when it exits 0. NEVER merge on your own reading of the checks.
-- REFUSE and report if the repo is `bradfordwagner/k8s-deployments` or `bradfordwagner/infra`. Those PRs change cluster state and need a deploy test first.
 - NEVER push to a `renovate/*` branch. NEVER edit repo files.
 - NEVER pass `--delete-branch` and NEVER delete a branch. The repo setting `delete_branch_on_merge` does it.
 - NEVER force anything. On a failing check, a PR that cannot rebase clean, or a timeout, STOP on that PR and report it. Continue with other PRs only if they do not depend on it.

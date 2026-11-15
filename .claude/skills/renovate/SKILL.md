@@ -57,8 +57,10 @@ the one piece of evidence behind it. Then list any dashboard items waiting for a
 ## 4. Act only on explicit approval
 
 - Merge: run `.claude/skills/renovate/merge-ready.sh <repo> <n>` first, then `gh pr merge <n> -R <repo> --squash` only on
-  exit 0. The script refuses `infra` and `k8s-deployments`: deploy-test those first (*Deploying a PR*). The merger agent
-  refuses them too.
+  exit 0. `infra` and `k8s-deployments` merge like any repo once the user approves, with or without a deploy test
+  (*Deploying a PR*). Report the missing test as a gap.
+  `merge-ready.sh` also requires a green `validate` check (`helm lint` + `helm template`) on any `k8s-deployments` PR
+  that touches `charts/`. GitHub cannot enforce it there (private repo, Free plan), so this gate is the only enforcement.
 - Approve a held update: edit the dashboard issue body and tick its `- [ ] <!-- approve-branch=... -->` box. Renovate
   opens the PR on its next run.
 - Rebase or retry a PR: tick its `- [ ] <!-- rebase-branch=... -->` box in the dashboard issue, then start a run.

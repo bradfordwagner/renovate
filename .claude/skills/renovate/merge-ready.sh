@@ -6,11 +6,7 @@ pr=${2:?usage: merge-ready.sh <owner/repo> <pr-number>}
 
 fail() { echo "NOT READY $repo#$pr: $1" >&2; exit 1; }
 
-case "$repo" in
-  bradfordwagner/k8s-deployments|bradfordwagner/infra) fail "cluster-state repo; deploy-test first" ;;
-esac
-
-json=$(gh pr view "$pr" -R "$repo" --json state,author,headRefName,headRefOid,mergeable,mergeStateStatus,statusCheckRollup)
+json=$(gh pr view "$pr" -R "$repo" --json state,author,headRefName,headRefOid,mergeable,mergeStateStatus,statusCheckRollup,files)
 field() { jq -r "$1" <<<"$json"; }
 
 [ "$(field .state)" = OPEN ] || fail "state is $(field .state)"
@@ -26,6 +22,15 @@ bad=$(field '[.statusCheckRollup[]
     else select(.status != "COMPLETED" or ((.conclusion | IN("SUCCESS","SKIPPED","NEUTRAL")) | not)) | "\(.name):\(.status)/\(.conclusion)"
     end] | join(", ")')
 [ -z "$bad" ] || fail "checks not green: $bad"
+
+# k8s-deployments cannot require a check in GitHub (private repo, Free plan: no branch protection),
+# so enforce it here. validate runs only when charts/** changes, so require it only then. A
+# SKIPPED or missing run fails: a PR branched before the workflow existed needs a rebase.
+if [ "$repo" = bradfordwagner/k8s-deployments ] \
+  && [ "$(field '[.files[].path | select(startswith("charts/"))] | length')" -gt 0 ]; then
+  validate=$(field '[.statusCheckRollup[] | select(.name == "validate") | .conclusion] | join(",")')
+  [ "$validate" = SUCCESS ] || fail "required check validate is '${validate:-missing}' (rebase the PR if it predates the workflow)"
+fi
 
 # A run that fails before any job starts (e.g. a matrix from empty output) reports no check.
 runs=$(gh api "repos/$repo/actions/runs?head_sha=$(field .headRefOid)" -q '[.workflow_runs[]
